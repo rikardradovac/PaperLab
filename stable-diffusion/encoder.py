@@ -55,4 +55,15 @@ class VAE(nn.Sequential):
                 
             x = module(x)
             
-            
+        # two tensors of size (b, 4, height/8, width/8 )
+        mean, log_var = torch.chunk(x, 2, dim=1)
+        
+        log_var = torch.clamp(log_var, -30, 20)
+        variance = log_var.exp()
+        std = variance.sqrt()
+        
+        
+        x = mean + std * noise
+        
+        x *= 0.18215
+        
